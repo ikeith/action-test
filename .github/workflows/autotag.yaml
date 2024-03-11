@@ -1,0 +1,31 @@
+name: 'Automatic Tagging'
+run-name: 'Automatic git version tagging'
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [master]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+concurrency:
+  group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
+  cancel-in-progress: true
+
+jobs:
+  execute-script:
+    # Only if the pull request was merged
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout branch "master"
+        uses: actions/checkout@v2
+        with:
+          ref: 'master'
+
+      - name: Execute script.sh
+        run: |
+          ./tag.sh
