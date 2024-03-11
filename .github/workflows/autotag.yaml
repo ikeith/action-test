@@ -16,7 +16,7 @@ concurrency:
 
 jobs:
   execute-script:
-    # Only if the pull request was merged
+    # Only run if the pull request was merged
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
 
@@ -27,12 +27,17 @@ jobs:
           fetch-depth: 50
           fetch-tags: true
           ref: 'master'
-    
-      - name: Set git username and email
-        run: |
-          git config --global user.name "${{ github.actor }}"
-          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
-
+        
       - name: Execute script.sh
+        id: tag_script
         run: |
-          ./tag.sh
+          ./tag.sh >> $GITHUB_OUTPUT
+      
+      - name: Apply tag
+        if: ${{ tag_script.output != '' }}
+        uses: rickstaa/action-create-tag@v1
+        with:
+          tag: ${{ tag_script.output }}
+          tag_exists_error: false
+          message: "Version ${{ tag_script.output }}"
+          
