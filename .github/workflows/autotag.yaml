@@ -34,10 +34,10 @@ jobs:
           ./tag.sh >> $GITHUB_OUTPUT
       
       - name: Apply tag
-        if: ${{ steps.tag_script.output != '' }}
+        if: ${{ steps.tag_script.output.newtag != '' }}
         uses: rickstaa/action-create-tag@v1
         with:
-          tag: ${{ steps.tag_script.output }}
+          tag: ${{ steps.tag_script.output.newtag }}
           tag_exists_error: false
-          message: "Version ${{ steps.tag_script.output }}"
+          message: "Version ${{ steps.tag_script.output.newtag }}"
           
