@@ -28,4 +28,5 @@ fi
 if [[ curVersion -gt prevVersion ]]; then
 	echo "updating $prevVersion -> $curVersion"
 	git tag -a "v$curVersion" -m "Version $curVersion"
+	git push origin "v$curVersion"
 fi
