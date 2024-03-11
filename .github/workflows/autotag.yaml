@@ -1,43 +1,41 @@
-name: 'Automatic Tagging'
-run-name: 'Automatic git version tagging'
+name: 'Automatic Version Tagging'
 
+# Closed PRs into master
 on:
   pull_request:
     types: [closed]
     branches: [master]
 
+# Saving a tag requires write permission to the repo
 permissions:
   contents: write
-  pull-requests: read
-
-concurrency:
-  group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
-  cancel-in-progress: true
 
 jobs:
   execute-script:
-    # Only run if the pull request was merged
+    # Only run if the closed PR was merged
     if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout branch "master"
         uses: actions/checkout@v4
+        # By default, checkout is shallow so we need some history to get the existing tags
         with:
           fetch-depth: 50
           fetch-tags: true
           ref: 'master'
         
-      - name: Execute script.sh
+      - name: Determine new tag
         id: tag_script
+        # Run the script and capture STDOUT
         run: |
-          ./tag.sh >> $GITHUB_OUTPUT
+          ./determine_tag.sh >> $GITHUB_OUTPUT
       
-      - name: Apply tag
+      - name: Save new tag
+        # If we have a new tag, then save it
         if: ${{ steps.tag_script.outputs.newtag != '' }}
         uses: rickstaa/action-create-tag@v1
         with:
           tag: ${{ steps.tag_script.outputs.newtag }}
           tag_exists_error: false
           message: "Version ${{ steps.tag_script.outputs.newtag }}"
-          
