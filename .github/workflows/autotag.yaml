@@ -31,10 +31,10 @@ jobs:
       - name: Execute script.sh
         id: tag_script
         run: |
-          ./tag.sh >> $GITHUB_OUTPUT
+          ./tag.sh
       
       - name: Apply tag
-        #if: ${{ steps.tag_script.output.newtag != '' }}
+        if: ${{ steps.tag_script.output.newtag != '' }}
         uses: rickstaa/action-create-tag@v1
         with:
           tag: ${{ steps.tag_script.output.newtag }}
