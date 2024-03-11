@@ -26,7 +26,7 @@ fi
 
 # add a new tag if needed
 if [[ curVersion -gt prevVersion ]]; then
-    echo "newtag=v$curVersion" >> $GITHUB_OUTPUT
+    echo "newtag=v$curVersion"
 	#echo "updating $prevVersion -> $curVersion"
 	#git tag -a "v$curVersion" -m "Version $curVersion"
 	#git push origin "v$curVersion"
