@@ -27,6 +27,12 @@ jobs:
           fetch-depth: 50
           fetch-tags: true
           ref: 'master'
+    
+      - name: Set git username and email
+        uses: actions/checkout@4
+        run: |
+          git config --global user.name "${{ github.actor }}"
+          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
 
       - name: Execute script.sh
         run: |
